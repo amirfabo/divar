@@ -51,7 +51,7 @@ class City(View):
 
     @classmethod
     def constructor(cls, name: str):
-        with open('places.json', 'r', encoding='utf-8') as file:
+        with open('data/places.json', 'r', encoding='utf-8') as file:
             for place in json.load(file):
                 if place['name'] == name:
                     return cls(
@@ -84,7 +84,7 @@ class Image(View):
         self.thumbnail_url = thumbnail_url
         self.is_video = is_video
 
-class Data(View):
+class MetaData(View):
     def __init__(self, title, value):
         self.title = title
         self.value = value
@@ -98,7 +98,7 @@ class PostFull(View):
         publish_date: datetime,
         city: City,
         district: str,
-        data: list[Data],
+        data: list[MetaData],
         description: str,
         image_count: int,
         images: list[Image]

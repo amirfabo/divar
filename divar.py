@@ -5,12 +5,12 @@ import random
 
 from typing import Generator
 from persiantools.jdatetime import JalaliDateTime
-from models import (
+from models.models import (
     City,
     Category,
     Post,
     PostFull,
-    Data,
+    MetaData,
     Image,
 )
 
@@ -19,7 +19,7 @@ from user_agent import generate_user_agent
 API_URL = "https://api.divar.ir/v8/postlist/w/search"
 POST_DATA_URL = "https://api.divar.ir/v8/posts-v2/web/{token}"
 
-class DivarCli:
+class Client:
     """Divar Client, the standard means for interacting with Divar.
 
     Parameters:
@@ -79,7 +79,7 @@ class DivarCli:
             thumbnail_url=data.get('image_url', None)
         )
 
-    def get_place_by_id(place_id: int) -> City | None:
+    def get_place_by_id(self, place_id: int) -> City | None:
         '''Get place by id.
 
         Parameters:
@@ -90,14 +90,14 @@ class DivarCli:
             A City object if place id is valid, otherwise None.
         '''
 
-        with open("./places.json", "r", encoding="utf-8") as file:
+        with open("data/places.json", "r", encoding="utf-8") as file:
             places_data = json.load(file)
             for place in places_data:
                 if place['id'] == place_id:
                     return City(
                         id=place['id'],
                         name=place['name'],
-                        slug=place['id'],
+                        slug=place['slug'],
                         parent_id=place['parent'],
                         is_province=place['parent'] == 715,
                     )
@@ -111,7 +111,7 @@ class DivarCli:
             A list of City objects.
         '''
 
-        with open('places.json', 'r', encoding='utf-8') as file:
+        with open('data/places.json', 'r', encoding='utf-8') as file:
             return [
                 City(
                     id=place['id'],
@@ -122,7 +122,7 @@ class DivarCli:
                 ) for place in json.load(file)
             ]
 
-    def get_category_by_name(title: str) -> list[Category]:
+    def get_category_by_name(self, title: str) -> list[Category]:
         '''Get category (or categories) by title.
 
         Parameters:
@@ -134,10 +134,10 @@ class DivarCli:
         '''
 
         result = []
-        with open("categories.json", "r", encoding="utf-8") as file:
+        with open('data/categories.json', "r", encoding="utf-8") as file:
             categories_data = json.load(file)
             for category in categories_data:
-                if query in category['title']:
+                if title in category['title']:
                     result.append(
                         Category(
                             title=category['title'],
@@ -155,7 +155,7 @@ class DivarCli:
             A list of Category objects.
         '''
 
-        with open('categories.json', 'r', encoding='utf-8') as file:
+        with open('data/categories.json', 'r', encoding='utf-8') as file:
             return [
                 Category(
                     title=category['title'],
@@ -343,7 +343,7 @@ class DivarCli:
                     if widget_type == "GROUP_INFO_ROW":
                         for item in widget['data']['items']:
                             data_list.append(
-                                Data(
+                                MetaData(
                                     title=item['title'],
                                     value=item['value']
                                 )
@@ -351,7 +351,7 @@ class DivarCli:
 
                     elif widget_type == "UNEXPANDABLE_ROW":
                         data_list.append(
-                            Data(
+                            MetaData(
                                 title=widget['data']['title'],
                                 value=widget['data']['value']
                             )
