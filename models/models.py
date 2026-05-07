@@ -53,13 +53,13 @@ class City(View):
     def constructor(cls, name: str):
         with open('data/places.json', 'r', encoding='utf-8') as file:
             for place in json.load(file):
-                if place['name'] == name:
+                if place['name'] == name and place['parent'] != 715:
                     return cls(
                         id=place['id'],
                         name=place['name'],
                         slug=place['slug'],
                         parent_id=place['parent'],
-                        is_province=place['parent'] == 715
+                        is_province=False
                     )
 
 class Category(View):
