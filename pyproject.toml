@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "divar"
+description = "Divar API Client"
+readme = "README.md"
+dynamic = ["version"]
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = [
+    "requests==2.32.3",
+    "persiantools==5.4.0",
+    "user_agent==0.1.14"
+]
+
+keywords = [
+    "api",
+    "divar",
+    "client"
+]
+
+[project.urls]
+Homepage = "https://github.com/amirfabo/divar"
+Documentation = "https://github.com/amirfabo/divar/tree/main/docs"
+Repository = "https://github.com/amirfabo/divar.git"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+divar = ["data/*.json"]

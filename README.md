@@ -16,37 +16,41 @@ ir</a>
 + **Fast**
 + **Type-hinted**
 
-### Setup
+### Installation
 
-Clone files:
-```
-git clone https://github.com/amirfabo/divar.git
-```
-
-After fetch files, you must install requirements:
-```
-pip install -r requirements.txt 
+```bash
+pip install git+https://github.com/amirfabo/divar.git
 ```
 
-### Usage
+### Quick Start
 
-```py
+```python
 from divar import Client
 
-app = Client()
+app = Client("myapp")
 
 # Get the last 100 posts from Mashhad
 for post in app.get_posts(place_ids=3, limit=100):
     print(post)
 
-# Get only cars posts from Tehran and Mashhad
-for post in app.get_posts(place_ids=[1, 3], category="cars", limit=25):
-    print(post)
-
-# Get full post information
-post = app.get_post(token='ABCDEF')
-print(post)
+# Get contact info of a post (need authorize)
+app.authorize()
+post = app.get_post(token="TOKEN")
+contact = post.contact()
+print(contact)
 ```
+
+### Documentation
+
+Use the links below to read usage with examples:
+- <a href="https://github.com/amirfabo/divar/tree/main/docs/methods.md" target="_blank">Methods</a>
+- <a href="https://github.com/amirfabo/divar/tree/main/docs/types.md" target="_blank">Types</a>
+
+### Donate
+
+Your support helps us continue the development and maintenance of this project ❤️
+
+TON or USDT (*TON*): `UQDH6BLtvJheNdQNbrVyI3_4dbsDaoYsyiOHyYVL_ndJ3D7u`<br>USDT (*TRC20*): `TMXg6DL2y8EC9RfXRzonDYrRrviZMrVzaL`
 
 ### Contact
 
