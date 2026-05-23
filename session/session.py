@@ -1,8 +1,24 @@
 import os
 import json
 
-class SessionManager:
-    '''Divar Session Manager'''
+class MemorySession:
+    """Memory Session Storage"""
+
+    def __init__(self, data: dict | None = None):
+        self._data = data.copy() if data else {}
+
+    def load(self) -> dict:
+        return self._data.copy()
+
+    def save(self, data: dict) -> bool:
+        self._data = data.copy()
+        return True
+
+    def exists(self) -> bool:
+        return bool(self._data)
+
+class FileSession:
+    """File Session Storage"""
 
     def __init__(self, session_name: str):
         self.session_name = session_name

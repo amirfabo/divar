@@ -27,15 +27,15 @@ pip install git+https://github.com/amirfabo/divar.git
 ```python
 from divar import Client
 
-app = Client("myapp")
+client = Client("myapp")
 
 # Get the last 100 posts from Mashhad
-for post in app.get_posts(place_ids=3, limit=100):
+for post in client.get_posts(place_ids=3, limit=100):
     print(post)
 
-# Get contact info of a post (need authorize)
-app.authorize()
-post = app.get_post(token="TOKEN")
+# Get contact info of a post (auth needed)
+client.authorize()
+post = client.get_post(token="TOKEN")
 contact = post.contact()
 print(contact)
 ```
@@ -43,10 +43,10 @@ print(contact)
 ### Documentation
 
 Use the links below to read usage with examples:
-- <a href="https://github.com/amirfabo/divar/tree/main/docs/methods.md" target="_blank">Methods</a>
-- <a href="https://github.com/amirfabo/divar/tree/main/docs/types.md" target="_blank">Types</a>
+- [Methods](https://github.com/amirfabo/divar/tree/main/docs/methods.md)
+- [Types](https://github.com/amirfabo/divar/tree/main/docs/types.md)
 
-### Donate
+### Support
 
 Your support helps us continue the development and maintenance of this project ❤️
 

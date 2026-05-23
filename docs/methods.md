@@ -1,3 +1,36 @@
+# Client
+
+The `Client` class is the main interface for interacting with Divar APIs.  
+It handles HTTP requests, session management, retries, timeouts, and default headers automatically.
+
+## Parameters
+
+- `session` (`str | None`, default=`None`)  
+  The session file name (or full file path) used for storing authorization data and session information.
+
+  - If `None`, the session will only be stored temporarily in memory.
+  - If provided, the session will be persisted using a file session.
+
+- `timeout` (`int`, default=`5`)  
+  Maximum time (in seconds) to wait for a server response before raising a timeout error.
+
+- `retries` (`int`, default=`3`)  
+  Maximum number of retry attempts for failed requests.
+
+## Example
+
+```python
+from divar import Client
+
+client = Client(
+    session='my_session',
+    timeout=10,
+    retries=5
+)
+```
+
+---
+
 # Client Methods
 
 ## authorize()

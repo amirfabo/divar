@@ -9,6 +9,7 @@ from importlib.resources import files
 from typing import Generator
 from persiantools.jdatetime import JalaliDateTime
 from persiantools.digits import fa_to_en
+
 from .models import (
     City,
     Category,
@@ -21,7 +22,7 @@ from .models import (
     Account,
 )
 
-from .session import SessionManager
+from .session import FileSession, MemorySession
 from . import errors
 
 from user_agent import generate_user_agent
@@ -30,6 +31,11 @@ class Client:
     """Divar Client, a Python client for interacting with Divar.
 
     Parameters:
+        session (str | None):
+            The file name of the session file (may be a full path), 
+            If it's None the session will not be saved.
+            Default to None.
+
         timeout (int):
             Set the maximum time for waiting to server response.
             Default to 5 seconds.
@@ -41,12 +47,17 @@ class Client:
 
     def __init__(
         self,
-        session: str,
+        session: str | None = None,
         timeout: int = 5,
-        retries: int = 3
+        retries: int = 3,
     ) -> None:
 
-        self.storage = SessionManager(session_name=session)
+        if session is None:
+            self.storage = MemorySession()
+
+        else:
+            self.storage = FileSession(session_name=session)
+
         self.retries = retries
         self.timeout = timeout
         self.is_authorized = False
@@ -244,13 +255,14 @@ class Client:
         return True
 
     def authorize(self) -> bool:
-        '''Authorization the client session
+        """Authenticate the client session.
 
-        In case of new sessions, automatically manages authorization process using an interactive prompt
+        For new sessions, this method automatically handles the
+        authorization process using an interactive prompt.
 
-        Return:
-            True if authorized, Otherwise false.
-        '''
+        Returns:
+            bool: True if the authorization was successful.
+        """
 
         if self.is_authorized:
             raise errors.AuthorizationError("Client is already authorized") 
@@ -323,7 +335,7 @@ class Client:
         raise errors.AuthorizationError()
 
     def get_place_by_id(self, place_id: int) -> City | None:
-        '''Get place by id.
+        """Get place by id.
 
         Parameters:
             place_id (int):
@@ -331,8 +343,8 @@ class Client:
 
         Return:
             A City object if place id is valid, otherwise None.
-        '''
-        
+        """
+
         path = files("divar.data").joinpath("places.json")
         places_data = json.loads(path.read_text(encoding='utf-8'))
         for place in places_data:
@@ -348,11 +360,11 @@ class Client:
         return None
 
     def get_all_places(self) -> list[City]:
-        '''Get available places.
+        """Get available places.
 
         Return:
             A list of City objects.
-        '''
+        """
 
         return [
             City(
@@ -369,7 +381,7 @@ class Client:
         ]
 
     def get_category_by_name(self, title: str) -> list[Category]:
-        '''Get category (or categories) by title.
+        """Get category (or categories) by title.
 
         Parameters:
             title (str):
@@ -377,7 +389,7 @@ class Client:
 
         Return:
             A list of Category objects.
-        '''
+        """
 
         path = files("divar.data").joinpath("categories.json")
         categories_data = json.loads(path.read_text(encoding='utf-8'))
@@ -396,11 +408,11 @@ class Client:
         return result
 
     def get_all_categories(self) -> list[Category]:
-        '''Get available categories.
+        """Get available categories.
 
         Return:
             A list of Category objects.
-        '''
+        """
 
         return [
             Category(
@@ -415,11 +427,11 @@ class Client:
         ]
 
     def get_me(self) -> Account:
-        '''Get own account info.
+        """Get own account info.
 
         Return:
             An Account object.
-        '''
+        """
 
         # This method require authorized session
         self._ensure_authorize()
@@ -434,15 +446,15 @@ class Client:
         )
 
     def bookmark_post(self, token: str) -> bool:
-        '''Bookmark a post.
+        """Bookmark a post.
 
         Parameters:
             token (str):
-                Unique token of the target post
+                Unique token of the target post.
 
         Return:
-            True if bookmarked successfully.
-        '''
+            bool: True if bookmarked successfully.
+        """
 
         # This method require authorized session
         self._ensure_authorize()
@@ -457,11 +469,11 @@ class Client:
         return (response.status_code == 200)
 
     def get_bookmarks(self) -> list[Post]:
-        '''Get bookmarked posts.
+        """Get bookmarked posts.
 
         Return:
             A list of Post objects.
-        '''
+        """
 
         # This method require authorized session
         self._ensure_authorize()
@@ -487,7 +499,7 @@ class Client:
         category: str = "ROOT",
         limit: int = 200
     ) -> Generator[Post, None, None]:
-        '''Retrieve all posts.
+        """Retrieve all posts.
 
             Parameters:
                 place_ids (int | list): 
@@ -501,7 +513,7 @@ class Client:
 
             Return:
                 A generator yielding Post objects.
-        '''
+        """
 
         if isinstance(place_ids, list):
             place_ids = [str(place_id) for place_id in place_ids]
@@ -548,15 +560,15 @@ class Client:
                 break
 
     def get_post(self, token: str) -> PostFull:
-        '''Retrieve full post information.
+        """Retrieve full post information.
 
         Parameters:
             token (str):
-                Unique post token.
+                Unique token of post.
 
         Return:
             A PostFull object.
-        '''
+        """
 
         response = self._request(
             "GET",
@@ -667,7 +679,7 @@ class Client:
         return postfull
 
     def get_post_contact(self, post: PostFull) -> Contact:
-        '''Retrieve the post contact info.
+        """Retrieve the post contact info.
 
         Parameters:
             post (models.PostFull):
@@ -675,7 +687,7 @@ class Client:
 
         Return:
             A Contact object.
-        '''
+        """
 
         # This method require authorized session
         self._ensure_authorize()
@@ -712,4 +724,3 @@ class Client:
             type=mapping.get(contact_method, ContactType.UNKNOWN),
             phone_number=fa_to_en(widget_data['value']) if contact_method == "CALL" else None
         )
-    
