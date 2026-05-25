@@ -579,7 +579,16 @@ class Client:
             }
         )
 
-        data = self._ensure_response(response, "sections")
+        try:
+            data = self._ensure_response(response, "sections")
+    
+        except errors.InvalidResponse as e:
+            r_data = e.response
+            if r_data and r_data.get("message") == "آگهی یافت نشد":
+                raise errors.PostNotFound() from e
+
+            raise
+
         sections = data['sections']
         web_engage = data['webengage']
         seo = data['seo']
@@ -703,8 +712,9 @@ class Client:
             data = self._ensure_response(response, 'widget_list')
 
         except errors.InvalidResponse as e:
-            if e.response and "hip_action" in e.response:
-                raise errors.CaptchaRequired()
+            r_data = e.response
+            if r_data and r_data.get("hip_action"):
+                raise errors.CaptchaRequired() from e
 
             raise
 

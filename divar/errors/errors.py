@@ -32,3 +32,6 @@ class InvalidResponse(DivarError):
 
 class CaptchaRequired(DivarError):
     default_message = "Captcha verification required"
+
+class PostNotFound(DivarError):
+    default_message = "Post does not exist"

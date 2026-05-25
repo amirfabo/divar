@@ -1,5 +1,5 @@
 from .client import Client
-from . import models, errors, session
+from . import errors, models, session
 
 __version__ = "1.1.0"
 __copyright__ = "Copyright (C) 2026 Amirfabo <https://github.com/amirfabo>"
