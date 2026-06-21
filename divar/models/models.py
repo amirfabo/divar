@@ -56,20 +56,6 @@ class City(View):
         self.parent_id = parent_id
         self.is_province = is_province
 
-    @classmethod
-    def constructor(cls, name: str):
-        path = files("divar.data").joinpath("places.json")
-        places_data = json.loads(path.read_text(encoding="utf-8"))
-        for place in places_data:
-            if place['name'] == name and place['parent'] != 715:
-                return cls(
-                    id=place['id'],
-                    name=place['name'],
-                    slug=place['slug'],
-                    parent_id=place['parent'],
-                    is_province=False
-                )
-
 class Category(View):
     def __init__(
         self,

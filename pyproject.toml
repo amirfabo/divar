@@ -30,4 +30,7 @@ Repository = "https://github.com/amirfabo/divar.git"
 include-package-data = true
 
 [tool.setuptools.package-data]
-divar = ["data/*.json"]
+divar = [
+    "places/*.json",
+    "categories/*.json"    
+]

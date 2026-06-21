@@ -24,6 +24,7 @@ from .models import (
 
 from .session import FileSession, MemorySession
 from . import errors
+from .places import get_place_by_name
 
 from user_agent import generate_user_agent
 
@@ -239,7 +240,10 @@ class Client:
                 for prefix in ('top', 'middle', 'bottom') 
             ],
             district=web_info.get('district_persian'),
-            city=City.constructor(name=web_info.get('city_persian')),
+            city=get_place_by_name(
+                name=web_info.get('city_persian'),
+                include_province=False    
+            ),
             image_count=data.get('image_count', 0),
             thumbnail_url=data.get('image_url', None),
             has_chat=data.get('has_chat', False),
@@ -333,98 +337,6 @@ class Client:
             return True
 
         raise errors.AuthorizationError()
-
-    def get_place_by_id(self, place_id: int) -> City | None:
-        """Get place by id.
-
-        Parameters:
-            place_id (int):
-                The specific place identifier.
-
-        Return:
-            A City object if place id is valid, otherwise None.
-        """
-
-        path = files("divar.data").joinpath("places.json")
-        places_data = json.loads(path.read_text(encoding='utf-8'))
-        for place in places_data:
-            if place['id'] == place_id:
-                return City(
-                    id=place['id'],
-                    name=place['name'],
-                    slug=place['slug'],
-                    parent_id=place['parent'],
-                    is_province=place['parent'] == 715,
-                )
-
-        return None
-
-    def get_all_places(self) -> list[City]:
-        """Get available places.
-
-        Return:
-            A list of City objects.
-        """
-
-        return [
-            City(
-                id=place['id'],
-                name=place['name'],
-                slug=place['id'],
-                parent_id=place['parent'],
-                is_province=place['parent'] == 715,
-            ) for place in json.loads(
-                files("divar.data")
-                .joinpath("places.json")
-                .read_text(encoding='utf-8')
-            )
-        ]
-
-    def get_category_by_name(self, title: str) -> list[Category]:
-        """Get category (or categories) by title.
-
-        Parameters:
-            title (str):
-                The specific category title.
-
-        Return:
-            A list of Category objects.
-        """
-
-        path = files("divar.data").joinpath("categories.json")
-        categories_data = json.loads(path.read_text(encoding='utf-8'))
-        
-        result = []
-        for category in categories_data:
-            if title in category['title']:
-                result.append(
-                    Category(
-                        title=category['title'],
-                        slug=category['slug'],
-                        path=category['path']
-                    )
-                )
-
-        return result
-
-    def get_all_categories(self) -> list[Category]:
-        """Get available categories.
-
-        Return:
-            A list of Category objects.
-        """
-
-        return [
-            Category(
-                title=category['title'],
-                slug=category['slug'],
-                path=category['path']
-            ) for category in json.loads(
-                files("divar.data")
-                .joinpath("categories.json")
-                .read_text(encoding="utf-8")
-            )
-        ]
 
     def get_me(self) -> Account:
         """Get own account info.

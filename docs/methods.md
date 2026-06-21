@@ -64,6 +64,8 @@ client.authorize()
 
 # Places
 
+> Place methods are available on divar.places since v1.2.0.
+
 ## get_place_by_id()
 
 Retrieve a place by its identifier.
@@ -85,8 +87,41 @@ Returns a `City` object if the place exists, otherwise `None`.
 ### Example
 
 ```python
-city = client.get_place_by_id(place_id=1)
+from divar import places
+
+city = places.get_place_by_id(place_id=1)
 print(city.name)
+```
+
+---
+
+## get_place_by_name()
+
+Retrieve a place by its name.
+
+### Parameters
+
+| Name | Type | Description |
+|---|---|---|
+| `name` | `str` | Specific place name. |
+`include_province` | `bool` | Whether include province's or not, Default to True.
+
+### Returns
+
+| Type |
+|---|
+| `City \| None` |
+
+Returns a `City` object if the place exists, otherwise `None`.
+
+### Example
+
+```python
+from divar import places
+
+# Return Tehran city (include_province=True for province)
+city = places.get_place_by_name('تهران', include_province=False)
+print(city)
 ```
 
 ---
@@ -104,6 +139,8 @@ Retrieve all available places.
 ---
 
 # Categories
+
+> Category methods are available on divar.categories since v1.2.0.
 
 ## get_category_by_name()
 
@@ -124,7 +161,10 @@ Retrieve categories matching a specific title.
 ### Example
 
 ```python
-categories = client.get_category_by_name(title="خودرو")
+from divar import categories
+
+catg = categories.get_category_by_name(title="خودرو")
+print(catg)
 ```
 
 ---
