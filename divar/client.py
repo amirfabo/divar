@@ -562,6 +562,14 @@ class Client:
                                 value=widget['data']['value']
                             )
                         )
+    
+                    elif widget_type == "SCORE_ROW":
+                        data_list.append(
+                            MetaData(
+                                title=widget['data']['title'],
+                                value=widget['data']['descriptive_score']
+                            )
+                        )
 
             elif section_name == "IMAGE":
                 for widget in widgets:
@@ -588,7 +596,10 @@ class Client:
             categories=categories,
             title=web_info['title'],
             publish_date=JalaliDateTime.strptime(publish_text, "%d %B %Y، %H:%M", locale="fa").to_gregorian(),
-            city=City.constructor(name=web_info['city_persian']),
+            city=get_place_by_name(
+                name=web_info['city_persian'],
+                include_province=False    
+            ),
             district=web_info['district_persian'],
             data=data_list,
             description=description,
@@ -596,7 +607,6 @@ class Client:
             images=images,
         )
         postfull.set_contact_uuid(data['contact']['contact_uuid'])
-
         return postfull
 
     def get_post_contact(self, post: PostFull) -> Contact:
